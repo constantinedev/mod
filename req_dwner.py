@@ -32,3 +32,10 @@ async def dwner(dwn_url, dwn_path, methods):
         file.write(data)
   tqdm_bar.close()
   print(f'Download Complete => {dwn_path + filename}')
+
+##########################################
+#### you should call this function with async
+#### ge. asyncio.run(dwner(url, svae_path, 'tor/nor'))
+#### it support tor and normal download files
+#### options on the call function at the end with tor or nor value's
+#### if you need to use the tor netowkring you need create tor by yourself.
