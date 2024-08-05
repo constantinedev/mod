@@ -3,11 +3,11 @@ from datetime import datetime as DT, timezone as TZ, timedelta as TD
 from aiohttp_socks import ProxyType, ProxyConnector, ProxyConnectionError
 
 from random_user_agent.user_agent import UserAgent
-from random_user_agent.params import SoftwareName, OperatingSystem
+from random_user_agent.params import SoftwareName, OperatingSystem, HardwareType, SoftwareEngine
 operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value, OperatingSystem.UNIX.value, OperatingSystem.MAC.value]
 hardware_types = [HardwareType.MOBILE.value, HardwareType.SERVER.value]
-software_engines = [SoftwareEngine.GECKO.value, SoftwareEngine.WEBKIT.value, SoftwareEngine.BLINK.value]
 software_names = [SoftwareName.CHROME.value, SoftwareName.FIREFOX.value, SoftwareName.SAFARI.value, SoftwareName.ANDROID.value]
+software_engines = [SoftwareEngine.GECKO.value, SoftwareEngine.WEBKIT.value, SoftwareEngine.BLINK.value]
 user_agent_rotator = UserAgent(software_names=software_names, software_engines=software_engines, hardware_types=hardware_types, operating_systems=operating_systems, limit=100)
 user_agent = user_agent_rotator.get_random_user_agent()
 
