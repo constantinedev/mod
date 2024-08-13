@@ -23,14 +23,10 @@ async def api_loader(version):
         return jsonify('response': 'Permission Denied'), 200
 
 async def v1():
-  if mod == "" or mod is None:
-    return redirect(url_for('/error_page')
   if mod == "encryptmsg":
     return await pgpEnc(json_data)
 
 async def v2():
-  if mod == "" or mod is None:
-    return redirect(url_for('/error_page')
   if mod == "mkqr":
     return await svgQRMaker(json_data)
     
