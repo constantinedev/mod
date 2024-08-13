@@ -33,3 +33,4 @@ async def v2():
     return redirect(url_for('/error_page')
   if mod == "mkqr":
     return await svgQRMaker(json_data)
+    
