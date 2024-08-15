@@ -25,4 +25,11 @@
       .then(repsponse => response.json())
       .then(data => console.log(data));
   }
+
+  document.getElementByTagName('tag_name').onclick = fx_fucntion()
+  
+  /// FUNCTION
+  function fx_example(){
+    console.log('123');
+  }
 </script>
