@@ -1,3 +1,5 @@
+<div id='tag_view', name='tag_view' onclick='call_fx()'></div>
+  
 <script>
   var tag_veiew = document.getElementByTagName('tag_name');
   //Change the element
@@ -25,10 +27,11 @@
       .then(repsponse => response.json())
       .then(data => console.log(data));
   }
-
-  document.getElementByTagName('tag_name').onclick = fx_fucntion()
   
   /// FUNCTION
+  function call_fx() {
+    fx_example()
+  };
   function fx_example(){
     console.log('123');
   }
