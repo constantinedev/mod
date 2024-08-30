@@ -23,11 +23,3 @@ async def qr_svg(data, classname, box_size):
   svg = img.to_string(encoding="unicode")
   print(svg)
   return svg
-
-##########
-### asyncio.run(qr_svg("123", None, None))
-##########
-### You can save with the `write` method: 
-### with open('filname.svg', 'w') as f:
-###   f.write(svg)
-### f.close()
