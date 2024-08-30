@@ -33,45 +33,45 @@ async def gun_shell(url, method, type, headers, payload):
     return await tor_req(url, method, type, headers, payload)
 
 async def nor_req(url, method, type, headers, payload):
-	if method == "GET":
-		req = requests.get(url, headers=headers, data=payload)
-	elif method == "POST":
-		req = requests.post(url, headers=headers, data=payload)
-	if req.status_code == 200:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			"response": req.text
-		}
-		return retData
-	else:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			'response': ""
-		}
-		return retData
+  if method == "GET":
+    req = requests.get(url, headers=headers, data=payload)
+  elif method == "POST":
+    req = requests.post(url, headers=headers, data=payload)
+  if req.status_code == 200:
+    retData = {
+      "status": req.status_code,
+      'method': method,
+      'type': type,
+      "response": req.text
+    }
+    return retData
+  else:
+    retData = {
+      "status": req.status_code,
+      'method': method,
+      'type': type,
+      'response': ""
+    }
+    return retData
 
 async def tor_req(url, method, type, headers, payload):
-	if method == "GET":
-		req = session.get(url, headers=headers, data=payload)
-	elif method == "POST":
-		req = session.post(url, headers=headers, data=payload)
-	if req.status_code == 200:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			"response": req.text
-		}
-		return retData
-	else:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			'response': ""
-		}
-		return retData
+  if method == "GET":
+    req = session.get(url, headers=headers, data=payload)
+  elif method == "POST":
+    req = session.post(url, headers=headers, data=payload)
+  if req.status_code == 200:
+    retData = {
+      "status": req.status_code,
+      'method': method,
+      'type': type,
+      "response": req.text
+    }
+    return retData
+  else:
+    retData = {
+      "status": req.status_code,
+      'method': method,
+      'type': type,
+      'response': ""
+    }
+    return retData
