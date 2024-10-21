@@ -1,9 +1,9 @@
 {
-  'SEED_CTY': {'NAME': 'CHINA', 'CTY_CODE': '000', 'ALPHA_3': 'RCN'},
-  'RELAY_CTY': {'NAME': 'CHINA', 'CTY_CODE': '000', 'ALPHA_3': 'RCN'},
-  'SING_DATE': 'DD-MM-YYYY',
-  'EXEC_DATE': 'DD-MM-YYYY',
-  'STATUS': 'FORCE',
-  'SUSPEND_DATE': 'DD-MM-YYYY',
-  'desc_': 'RULES OF LAW',
+  "SEED_CTY": {"NAME": "CHINA", "CTY_CODE": "000", "ALPHA_3": "RCN"},
+  "RELAY_CTY": {"NAME": "HONGKONG", "CTY_CODE": "334", "ALPHA_3": "HKG"},
+  "SING_DATE": "DD-MM-YYYY",
+  "EXEC_DATE": "DD-MM-YYYY",
+  "STATUS": "FORCE",
+  "SUSPEND_DATE": "DD-MM-YYYY",
+  "desc_": "RULES OF LAW"
 }
