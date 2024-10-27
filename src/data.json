@@ -7,3 +7,222 @@
   "SUSPEND_DATE": "DD-MM-YYYY",
   "desc_": "RULES OF LAW"
 }
+
+[
+    {
+        "DESC_": "Fugitive Offenders (Australia) Order",
+        "EXEC_DATE": "29-06-1997",
+        "RELAY_CTY": "036",
+        "SEED_CTY": "344",
+        "SING_DATE": "15-11-1993",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "09-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Australia) (Amendment) Order 2007",
+        "EXEC_DATE": "07-05-2008",
+        "RELAY_CTY": "036",
+        "SEED_CTY": "344",
+        "SING_DATE": "19-03-2007",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "09-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Canada) Order",
+        "EXEC_DATE": "13-06-1997",
+        "RELAY_CTY": "124",
+        "SEED_CTY": "344",
+        "SING_DATE": "07-09-1993",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "03-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Czech Republic) Order",
+        "EXEC_DATE": "13-02-2015",
+        "RELAY_CTY": "203",
+        "SEED_CTY": "344",
+        "SING_DATE": "04-03-2013",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "List of the Offences for which Surrender May be Granted",
+        "EXEC_DATE": "13-02-2015",
+        "RELAY_CTY": "203",
+        "SEED_CTY": "344",
+        "SING_DATE": "04-03-2013",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Finland) Order",
+        "EXEC_DATE": "15-08-2013",
+        "RELAY_CTY": "246",
+        "SEED_CTY": "344",
+        "SING_DATE": "20-05-2005",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "16-10-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (France) Order",
+        "EXEC_DATE": null,
+        "RELAY_CTY": "250",
+        "SEED_CTY": "344",
+        "SING_DATE": "04-05-2017",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "03-08-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Germany) Order",
+        "EXEC_DATE": "11-04-2009",
+        "RELAY_CTY": "276",
+        "SEED_CTY": "344",
+        "SING_DATE": "26-05-2006",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "31-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (India) Order",
+        "EXEC_DATE": "14-11-1997",
+        "RELAY_CTY": "356",
+        "SEED_CTY": "344",
+        "SING_DATE": "28-06-1997",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Indonesia) Order",
+        "EXEC_DATE": "13-07–2001",
+        "RELAY_CTY": "360",
+        "SEED_CTY": "344",
+        "SING_DATE": "05-05-1997",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Ireland) Order",
+        "EXEC_DATE": "14-01-2009",
+        "RELAY_CTY": "372",
+        "SEED_CTY": "344",
+        "SING_DATE": "05-10-2007",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "13-10-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Republic of Korea) Order",
+        "EXEC_DATE": "11-02-2007",
+        "RELAY_CTY": "410",
+        "SEED_CTY": "344",
+        "SING_DATE": "26-06-2006",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Malaysia) Order",
+        "EXEC_DATE": "16-07-2001",
+        "RELAY_CTY": "458",
+        "SEED_CTY": "344",
+        "SING_DATE": "11-01-1995",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Malaysia) (Amendment) Order 2007",
+        "EXEC_DATE": "01-11-2007",
+        "RELAY_CTY": "458",
+        "SEED_CTY": "344",
+        "SING_DATE": "17-10-2006",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Netherlands) Order",
+        "EXEC_DATE": "20-06-1997",
+        "RELAY_CTY": "528",
+        "SEED_CTY": "344",
+        "SING_DATE": "02-11-1998",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "15-10-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Netherlands) (Amendment) Order 2016",
+        "EXEC_DATE": "21-05-2016",
+        "RELAY_CTY": "528",
+        "SEED_CTY": "344",
+        "SING_DATE": "17-02-2015",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "15-10-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (New Zealand) Order",
+        "EXEC_DATE": "23-10-1998",
+        "RELAY_CTY": "554",
+        "SEED_CTY": "344",
+        "SING_DATE": "03-04-1998",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "27-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (Philippines) Order",
+        "EXEC_DATE": "20-06-1997",
+        "RELAY_CTY": "608",
+        "SEED_CTY": "344",
+        "SING_DATE": "13-01-1995",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Portugal) Order",
+        "EXEC_DATE": "01-11-2004",
+        "RELAY_CTY": "620",
+        "SEED_CTY": "344",
+        "SING_DATE": "24-05-2001",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Singapore) Order",
+        "EXEC_DATE": "11-06-1998",
+        "RELAY_CTY": "702",
+        "SEED_CTY": "344",
+        "SING_DATE": "11-11-1997",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (South Africa) Order",
+        "EXEC_DATE": "02-12-2011",
+        "RELAY_CTY": "710",
+        "SEED_CTY": "344",
+        "SING_DATE": "20-02-2009",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (Sri Lanka) Order",
+        "EXEC_DATE": "19-04-2003",
+        "RELAY_CTY": "144",
+        "SEED_CTY": "344",
+        "SING_DATE": "03-09-1999",
+        "STATUS": "TRUE",
+        "SUSPEND_DATE": null
+    },
+    {
+        "DESC_": "Fugitive Offenders (United Kingdom) Order",
+        "EXEC_DATE": "19-03-1997",
+        "RELAY_CTY": "092",
+        "SEED_CTY": "344",
+        "SING_DATE": "05-11-1997",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "20-07-2020"
+    },
+    {
+        "DESC_": "Fugitive Offenders (United States of America) Order",
+        "EXEC_DATE": "21-01-1998",
+        "RELAY_CTY": "840",
+        "SEED_CTY": "344",
+        "SING_DATE": "20-12-1996",
+        "STATUS": "SUSPENDED",
+        "SUSPEND_DATE": "19-08-2020"
+    }
+]
