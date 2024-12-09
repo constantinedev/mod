@@ -28,7 +28,7 @@ async def gun_shell(url, method, type, headers, payload):
   if headers=={} or headers is None:
     headers = def_headeres
   else:
-    headers = def_headeres.updates(headers)
+    headers = def_headeres.update(headers)
   
   if payload=={} or payload is None:
     payload = {}
