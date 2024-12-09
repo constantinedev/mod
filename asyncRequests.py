@@ -16,7 +16,7 @@ session.proxies = {}
 session.proxies['http'] = 'socks5h://localhost:9050'
 session.proxies['https'] = 'socks5h://localhost:9050'
 
-headeres = {
+def_headeres = {
 	'User-Agent': user_agent,
 	'Content-Type': 'text/html',
 }
@@ -26,9 +26,9 @@ async def gun_shell(url, method, type, headers, payload):
     return {"status": "Error", "response": "URL was empty."}
   
   if headers=={} or headers is None:
-    headers.updates({'user-Agent':user_agent,'Content-Type': 'html/text'})
+    headers = def_headeres
   else:
-    headers.update(headers)
+    headers = def_headeres.updates(headers)
   
   if payload=={} or payload is None:
     payload = {}
