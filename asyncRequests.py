@@ -16,7 +16,7 @@ session.proxies = {}
 session.proxies['http'] = 'socks5h://localhost:9050'
 session.proxies['https'] = 'socks5h://localhost:9050'
 
-def_headeres = {
+headeres = {
 	'User-Agent': user_agent,
 	'Content-Type': 'text/html',
 }
@@ -26,9 +26,9 @@ async def gun_shell(url, method, type, headers, payload):
     return {"status": "Error", "response": "URL was empty."}
   
   if headers=={} or headers is None:
-    headers = def_headeres
+    headers.updates({'user-Agent':user_agent,'Content-Type': 'html/text'})
   else:
-    headers = def_headeres.update(headers)
+    headers.update(headers)
   
   if payload=={} or payload is None:
     payload = {}
@@ -79,24 +79,13 @@ async def nor_req(url, method, type, headers, payload):
 		}
 		return retData
 	else:
-		Cloudscraper = cloudscraper.create_scraper(sess=headers)
-		result = Cloudscraper.post(url, headers=headers)
-		if result.status_code == 200:
-			retData = {
-				"status": result.status_code,
-				'method': method,
-				'type': type,
-				'response': result.content
-			}
-			return retData
-		else:
-			retData = {
-				"status": result.status_code,
-				'method': method,
-				'type': type,
-				'response': ""
-			}
-			return retData
+		retData = {
+			"status": req.status_code,
+			'method': method,
+			'type': type,
+			'response': ""
+		}
+		return retData
 
 async def tor_req(url, method, type, headers, payload):
 	if method == "GET":
