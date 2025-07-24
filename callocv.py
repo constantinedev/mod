@@ -1,0 +1,200 @@
+import re, os, io, sys, ast, ssl, json, csv, sqlite_utils, requests, asyncio, time, pgpy
+from datetime import datetime as DT, timezone as TZ, timedelta as TD, time as TIME, date
+from sqlite_utils.utils import sqlite3
+
+import cv2, vlc, threading, yt_dlp, imutils, qrcode, pyotp, jwt
+
+object_detector = cv2.createBackgroundSubtractorKNN()
+qrcode_detector = cv2.QRCodeDetector()
+face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+plates_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_license_plate_rus_16stages.xml')
+
+### Config Cmaner
+def callcamera(resources):
+	cap = cv2.VideoCapture()
+	match resources:
+		case int():
+			cap.open(int(resources))
+			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+		case str():
+			if "youtube.com" in resources:
+				video_url, audio_url, yt_fps = ytStream(str(resources), 'cookies.txt')
+				print(video_url)
+				cap.open(str(video_url), cv2.CAP_FFMPEG)
+				if audio_url is not None:
+					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
+					audio_thread.start()
+			else:
+				cap.open(str(resources), cv2.CAP_FFMPEG)
+		case _:
+			print(f"Input Resources Empty. ")
+			exit()
+	return cap
+
+### Play Audio
+def play_audio(url):
+	if not url:
+		return
+	player = vlc.MediaPlayer(url)
+	player.play()
+	return player
+
+### YouTube Stream URL
+def ytStream(url, cookies_path=None):
+	ydl_opts = {
+		"quiet": True,
+		'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best', 
+		"coookiefile": "cookies.txt",
+	}
+	if cookies_path:
+		ydl_opts['coookiefile'] = cookies_path
+	else:
+		ydl_opts['coookiefile'] = "cookies.txt"
+	with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+		info = ydl.extract_info(url, download=False)
+		if 'requested_formats' in info:
+			video_url = info['requested_formats'][0]['url']
+			audio_url = info['requested_formats'][1]['url']
+		else:
+			video_url = info['url']
+			audio_url = None
+			print(f"Video Can't get the audio channel")
+		yt_fps = info.get('fps', 30)
+		return video_url, audio_url, yt_fps
+
+async def snapshort(frame, fileName, filePath : None):
+	if not filePath:
+		file_save_as = f"temps/images/cvcap/{fileName}.jpg"
+	else:
+		file_save_as = f"{filePath}/{fileName}.jpg"
+	cv2.imwrite(file_save_as, frame)
+	return
+
+### OpenCV Core
+def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
+	cap = callcamera(camera_src)
+	width_ = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+	height_ = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+	fps = int(cap.get(cv2.CAP_PROP_FPS))
+	counts = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+	print(width_, height_, fps, counts)
+
+	# fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+	# temp_video_path = 'temp_video.mp4'
+	# out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width_, height_))
+	
+	while True:
+		if not cap.isOpened():
+			if cap : cap.release()
+			print("Camera not Detected!")
+			continue
+		height, width, fps = frame.shape
+		rtf, frame = cap.read()
+		if not rtf:
+			print(f"Failed to grab frame!")
+			if cap: cap.release()
+			continue
+		if brightness_gain is None:
+			brightness_gain = 1.0
+		else:
+			brightness_gain = int(brightness_gain)
+		bright_tuner = cv2.convertScaleAbs(frame, alpha=brightness_gain, beta=20)
+		mask = object_detector.apply(bright_tuner)
+		gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+		motionDetection(bright_tuner, mask, label_border, min_area, max_area)
+		qrcodeDetect(bright_tuner, label_border, min_area, max_area)
+		faceDetection(bright_tuner, gray_image, label_border)
+		wordsDecetion(bright_tuner)
+
+		# flipped_shape = cv2.flip(mask, 1)
+		# resized_thresh = cv2.resize(flipped_shape if cap is cv2.VideoCapture(0) else mask, (width, height))
+		# cv2.imshow("Object Detect View", resized_thresh)
+		# flipped = cv2.flip(bright_tuner, 1)
+		# resized_frame = cv2.resize(flipped if cap is cv2.VideoCapture(0) else frame, (width, height))
+		# cv2.namedWindow("IP Camera Stream", cv2.WINDOW_NORMAL)
+		# cv2.imshow("IP Camera Stream", resized_frame)
+		cv2.imshow(bright_tuner) ### View Debug
+		# out.write(resized_frame)
+		
+		return  bright_tuner, mask
+	
+		# if cv2.waitKey(1) & 0xFF == ord('q'):
+		# 	break
+	# cap.release()
+	# cv2.destroyAllWindows()
+### OpenCV Core [END]
+
+### FACE DETECTION
+def faceDetection(frame, gray_image, label_border):
+	face = face_classifier.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+
+	if len(face) > 0:
+		x, y, w, h = face[0]
+		bbox = (x, y, h, w)
+		try:
+			tracker = cv2.legacy.TrackerCSRT_create()
+			tracker.init(frame, bbox)
+			
+			# timestamp = DT.now().strftime("%Y-%m-%d_%H-%M-%S")
+			timestamp = DT.now().strftime("%Y-%m-%d_%H-%M")
+			fileName = timestamp
+			# await snapshort(frame, fileName, None)
+		except AttributeError:
+			print("Error: CSRT tracker not available. Ensure opencv-contrib-python is installed.")
+			return
+
+	for (x, y, w, h) in face:
+		cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 1)
+		cv2.putText(frame, "FACE DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
+
+### MOTION DETECT
+def motionDetection(frame, mask, label_border, min_area, max_area):
+	contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	for contour in contours:
+		area = cv2.contourArea(contour)
+		if int(min_area) < area < int(max_area):
+			(x, y, w, h) = cv2.boundingRect(contour)
+			cv2.rectangle(frame, (x - int(label_border), y - int(label_border)), (x + w + int(label_border), y + h + int(label_border)), (0, 255, 0), 1)
+			cv2.putText(frame, "DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+			# timestamp = DT.now().strftime("%Y-%m-%d_%H-%M")
+			# fileName = timestamp
+			# await snapshort(frame, fileName, None)
+		# elif 1800 < area < 2000:
+		# 	(x, y, w, h) = cv2.boundingRect(contour)
+		# 	cv2.rectangle(frame, (x - int(label_border), y - int(label_border)), (x + w + int(label_border), y + h + int(label_border)), (0, 255, 255), 1)
+		# 	cv2.putText(frame, "DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+		else:
+			continue
+
+### QRCode Detect
+async def qrcodeDetect(frame):
+	data, points, _ = cv2.QRCodeDetector().detectAndDecode(frame)
+	if points is not None:
+		points = points[0]
+		points = [(int(point[0]), int(point[1])) for point in points]
+
+		for i in range(len(points)):
+			pt1 = points[i]
+			pt2 = points[(i+1) % len(points)]
+			cv2.line(frame, tuple(pt1), tuple(pt2), (0, 255, 0), 1)
+		if data:
+			qr_content = data
+			print(qr_content)
+			# await snapshort(frame, "testsave.jpg", None)
+			# return qr_content
+			### Make Output Data to NEXT step
+
+async def wordsDecetion(frame):
+	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	plates = plates_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20), flags=cv2.CASCADE_SCALE_IMAGE)
+	for (x,y,w,h) in plates:
+		plates_rec = cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 1)        
+		cv2.putText(plates_rec, 'Text', (x, y-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,255,0), 1)
+
+		# fileName = f"{DT.now().strftime('%Y-%m-%d_%H-%M')}"
+		# await snapshort(frame, fileName, None)
+
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(streaming())
