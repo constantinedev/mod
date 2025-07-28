@@ -11,7 +11,15 @@ plates_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_lice
 
 ### Config Cmaner
 def callcamera(resources):
+	CUDA_STATUS = False
 	cap = cv2.VideoCapture()
+	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+		cv2.cuda.setDevice(0)
+		print(f"CUDA Devices Detected: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		CUDA_STATUS = True
+	else:
+		print(f"CUDA Devices Not Detected: {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
+		CUDA_STATUS = False
 	match resources:
 		case int():
 			cap.open(int(resources))
@@ -80,6 +88,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 	counts = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 	print(width_, height_, fps, counts)
 
+	### Write Video to MP4
 	# fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 	# temp_video_path = 'temp_video.mp4'
 	# out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width_, height_))
@@ -99,9 +108,16 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 			brightness_gain = 1.0
 		else:
 			brightness_gain = int(brightness_gain)
-		bright_tuner = cv2.convertScaleAbs(frame, alpha=brightness_gain, beta=20)
+
+		if CUDA_STATUS:
+			gpu_frame = cv2.cuda_GpuMat()
+			gpu_frame.upload(frame)
+			cuda_frame = gpu_frame.download()
+		else: pass
+		
+		bright_tuner = cv2.convertScaleAbs(frame if not CUDA_STATUS else cuda_frame, alpha=brightness_gain, beta=20)
 		mask = object_detector.apply(bright_tuner)
-		gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		gray_image = cv2.cvtColor(frame if not CUDA_STATUS else cuda_frame, cv2.COLOR_BGR2GRAY)
 
 		motionDetection(bright_tuner, mask, label_border, min_area, max_area)
 		qrcodeDetect(bright_tuner, label_border, min_area, max_area)
