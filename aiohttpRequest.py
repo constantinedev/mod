@@ -32,7 +32,7 @@ async def gun_shell(url, method, type, headers, payload):
       return await bulletfire(session, url, method, type, headers, payload)
 
 async def bulletfire(session, url, method, type, headers, payload):
-  # timeout = aiohttp.ClientTimeout(total=5)
+  timeout = aiohttp.ClientTimeout(total=5)
   if method == "GET":
     if headers == "" or headers is None:
       headers = {'user-agent': user_agent, 'Contnet-Tpye': 'text/html'}
@@ -44,7 +44,6 @@ async def bulletfire(session, url, method, type, headers, payload):
           'type': type,
           'response': await response.text()
         }
-        return retData
       else:
         retData = {
           'status': response.status,
@@ -52,7 +51,6 @@ async def bulletfire(session, url, method, type, headers, payload):
           'type': type,
           'response': ""
         }
-        return retData
   elif method == "POST":
     if headers == "" or headers is None:
       headers = {'user-agent': user_agent, 'Contnet-Tpye': 'application/josn'}
@@ -64,7 +62,6 @@ async def bulletfire(session, url, method, type, headers, payload):
           'type': type,
           'response': json.loads(await response.text())
         }
-        return retData
       else:
         retData = {
           'status': response.status,
@@ -72,15 +69,4 @@ async def bulletfire(session, url, method, type, headers, payload):
           'type': type,
           'response': ""
         }
-        return retData
-
-### Usage make a call function wtih async and import to your recalling header
-### You need the step to make the response return: 
-### gun_shell(url, method, type, headers, payload)
-### url : f'http(s)://example.com/'
-### method : GET|POST
-### type : nor|tor
-### headers : json formanat header content
-### payload : payload data with json format.
-### Your respponse will be the json format return also, [status], [method], [type], [response]
-### You can get back the resonse like ```res['response'].strip()```
+  return retData
