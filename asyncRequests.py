@@ -47,7 +47,6 @@ async def nor_req(url, method, type, headers, payload):
 				'type': type,
 				'response': req.content
       }
-			return retData
 		else:
 			Cloudscraper = cloudscraper.create_scraper(sess=headers)
 			result = Cloudscraper.get(url, headers=headers)
@@ -58,7 +57,6 @@ async def nor_req(url, method, type, headers, payload):
 					'type': type,
 					'response': result.content
 				}
-				return retData
 			else:
 				retData = {
 					'status': result.status_code,
@@ -66,7 +64,6 @@ async def nor_req(url, method, type, headers, payload):
 					'type': type,
 					'response': ""
 				}
-				return retData
 
 	elif method == "POST":
 		req = requests.post(url, headers=headers, data=payload)
@@ -77,15 +74,24 @@ async def nor_req(url, method, type, headers, payload):
 			'type': type,
 			"response": req.content
 		}
-		return retData
 	else:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			'response': ""
-		}
-		return retData
+		Cloudscraper = cloudscraper.create_scraper(sess=headers)
+		result = Cloudscraper.post(url, headers=headers)
+		if result.status_code == 200:
+			retData = {
+				"status": result.status_code,
+				'method': method,
+				'type': type,
+				'response': result.content
+			}
+		else:
+			retData = {
+				"status": result.status_code,
+				'method': method,
+				'type': type,
+				'response': ""
+			}
+	return retData
 
 async def tor_req(url, method, type, headers, payload):
 	if method == "GET":
@@ -99,7 +105,6 @@ async def tor_req(url, method, type, headers, payload):
 			'type': type,
 			"response": req.text
 		}
-		return retData
 	else:
 		retData = {
 			"status": req.status_code,
@@ -107,4 +112,4 @@ async def tor_req(url, method, type, headers, payload):
 			'type': type,
 			'response': ""
 		}
-		return retData
+	return retData
