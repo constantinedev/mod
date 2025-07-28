@@ -131,8 +131,8 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 		# resized_frame = cv2.resize(flipped if cap is cv2.VideoCapture(0) else frame, (width, height))
 		# cv2.namedWindow("IP Camera Stream", cv2.WINDOW_NORMAL)
 		# cv2.imshow("IP Camera Stream", resized_frame)
-		cv2.imshow(bright_tuner) ### View Debug
-		# out.write(resized_frame)
+		# cv2.imshow(bright_tuner) ### View Debug
+		# out.write(resized_frame) ### Write to .MP4 File
 		
 		return  bright_tuner, mask
 	
