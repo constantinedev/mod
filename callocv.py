@@ -77,8 +77,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 		case _:
 			print(f"Stream Resources not Get!")
 			exit()
-  
-	cap = callcamera(camera_src)
+
 	width_ = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 	height_ = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 	fps = int(cap.get(cv2.CAP_PROP_FPS))
@@ -93,7 +92,8 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 			if cap : cap.release()
 			print("Camera not Detected!")
 			continue
-	while True:
+
+  while True:
 	  rtf, frame = cap.read()
 		if not rtf:
 			print(f"Failed to grab frame!")
