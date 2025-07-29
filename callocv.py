@@ -48,90 +48,89 @@ async def snapshort(frame, fileName, filePath : None):
 	cv2.imwrite(file_save_as, frame)
 	return
 
+CUDA_STATUS = False
 ### OpenCV Core
 def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
-	CUDA_STATUS = False
-	cap = cv2.VideoCapture()
 	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
 		cv2.cuda.setDevice(0)
-		print(f"CUDA Devices Detected: {cv2.cuda.getCudaEnabledDeviceCount()}")
 		CUDA_STATUS = True
+		print(f"CUDA Device(s) Detected! {cv2.cuda.getCudaEnabledDeviceCount()}")
 	else:
-		print(f"CUDA Devices Not Detected: {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
 		CUDA_STATUS = False
+		print(f"CUDA Device(s) Not Detected! {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
+	
 	match camera_src:
 		case int():
-			cap.open(int(camera_src))
-			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+			cap = cv2.VideoCapture(int(camera_src), cv2.CAP_DSHOW)
 		case str():
-			if "youtube.com" in camera_src:
-				video_url, audio_url, yt_fps = ytStream(str(camera_src), 'cookies.txt')
-				print(video_url)
-				cap.open(str(video_url), cv2.CAP_FFMPEG)
-				if audio_url is not None:
+			if 'youtube.com' in camera_src:
+				video_url, audio_url, yt_fps = ytStream(str(camera_src), cv2.CAP_FFMPEG)
+				cap = cv2.VideoCapture(str(video_url, cv2.CAP_FFMPEG))
+				if audio_url:
 					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
 					audio_thread.start()
 			else:
-				cap.open(str(camera_src), cv2.CAP_FFMPEG)
+				cap = cv2.VideoCapture(str(camera_src), cv2.CAP_FFMPEG)
 		case _:
-			print(f"Stream Resources not Get!")
-			exit()
-
-	width_ = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-	height_ = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+			print(f"Camera Not get Resources.")
+			return f"Camera Not get Resources."
+	
+	width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+	height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 	fps = int(cap.get(cv2.CAP_PROP_FPS))
 	counts = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-	print(width_, height_, fps, counts)
-
-	### Write Video to MP4
-	# fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-	# temp_video_path = 'temp_video.mp4'
-	# out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width_, height_))
+	print(width, height, fps, counts)
+	
+	fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+	temp_video_path = 'temp_video.mp4'
+	out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width, height))
+	
 	if not cap.isOpened():
 		if cap : cap.release()
-		print("Camera not Detected!")
-		exit()
-
-	while True:
-		rtf, frame = cap.read()
-		if not rtf:
-			print(f"Failed to grab frame!")
-			if cap: cap.release()
-			continue
-		height, width, fps = frame.shape
-		if brightness_gain is None:
-			brightness_gain = 1.0
-		else:
-			brightness_gain = int(brightness_gain)
-
-		if CUDA_STATUS:
-			gpu_frame = cv2.cuda_GpuMat()
-			gpu_frame.upload(frame)
-			cuda_frame = gpu_frame.download()
-		else: pass
-		
-		bright_tuner = cv2.convertScaleAbs(frame if not CUDA_STATUS else cuda_frame, alpha=brightness_gain, beta=20)
-		mask = object_detector.apply(bright_tuner)
-		gray_image = cv2.cvtColor(frame if not CUDA_STATUS else cuda_frame, cv2.COLOR_BGR2GRAY)
-
-		qrcodeDetect(bright_tuner)
-		motionDetection(bright_tuner, mask, label_border, min_area, max_area)
-		faceDetection(bright_tuner, gray_image, label_border)
-		wordsDecetion(bright_tuner, gray_image)
-
-		# flipped = cv2.flip(bright_tuner, 1)
-		cv2.namedWindow("DEBUG VIEW - CUDA" if CUDA_STATUS else "EDBUG VIEW - CPU", cv2.WINDOW_NORMAL) ### Make Windpw Resizable
-		cv2.imshow("DEBUG VIEW - CUDA" if CUDA_STATUS else "EDBUG VIEW - CPU", bright_tuner) ### View Debug
-		# out.write(bright_tuner) ### Write to .MP4 File
-		
-		# return  bright_tuner, mask
+		if out : out.release()
+		print(f"Camera not Connected!")
 	
+	while True:
+		frame, mask = ocvcore(cap, brightness_gain, label_border, min_area, max_area)
+		if frame is None:
+			break
+
+		### DEBUG FOR SHOWING TEH FRAME
+		cv2.imshow("FRAME SHOW", frame)
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
 	cap.release()
 	cv2.destroyAllWindows()
 ### OpenCV Core [END]
+
+def ocvcore(cap, brightness_gain, label_border, min_area, max_area):
+	ret, frame = cap.read()
+	width, height, fps = frame.shape
+	if not ret:
+		return None, None
+
+	if brightness_gain is None:
+		brightness_gain = 1.0
+	else:
+		brightness_gain = int(brightness_gain)
+	bright_tuner = cv2.convertScaleAbs(frame, alpha=brightness_gain, beta=0)
+
+	if CUDA_STATUS:
+		gpu_frame = cv2.cuda_GpuMat()
+		gpu_frame.upload(bright_tuner)
+		cuda_frame = gpu_frame.download()
+	else: pass
+	
+	frame = cuda_frame if CUDA_STATUS else bright_tuner
+	mask = object_detector.apply(frame)
+	gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+	
+	qrcodeDetect(frame)
+	motionDetection(frame, mask, label_border, min_area, max_area)
+	faceDetection(frame, gray_image, label_border)
+	wordsDecetion(frame, gray_image)
+	
+	return frame, mask
 
 ### FACE DETECTION
 def faceDetection(frame, gray_image, label_border):
@@ -147,7 +146,7 @@ def faceDetection(frame, gray_image, label_border):
 			# timestamp = DT.now().strftime("%Y-%m-%d_%H-%M-%S")
 			timestamp = DT.now().strftime("%Y-%m-%d_%H-%M")
 			fileName = timestamp
-			# await snapshort(frame, fileName, None)
+			# snapshort(frame, fileName, None)
 		except AttributeError:
 			print("Error: CSRT tracker not available. Ensure opencv-contrib-python is installed.")
 			return
@@ -164,14 +163,14 @@ def motionDetection(frame, mask, label_border, min_area, max_area):
 		if int(min_area) < area < int(max_area):
 			(x, y, w, h) = cv2.boundingRect(contour)
 			cv2.rectangle(frame, (x - int(label_border), y - int(label_border)), (x + w + int(label_border), y + h + int(label_border)), (0, 255, 0), 1)
-			cv2.putText(frame, "DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+			cv2.putText(frame, "DETECT", (x - int(label_border), y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
 			# timestamp = DT.now().strftime("%Y-%m-%d_%H-%M")
 			# fileName = timestamp
-			# await snapshort(frame, fileName, None)
+			# snapshort(frame, fileName, None)
 		# elif 1800 < area < 2000:
 		# 	(x, y, w, h) = cv2.boundingRect(contour)
 		# 	cv2.rectangle(frame, (x - int(label_border), y - int(label_border)), (x + w + int(label_border), y + h + int(label_border)), (0, 255, 255), 1)
-		# 	cv2.putText(frame, "DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
+		# 	cv2.putText(frame, "DETECT", (x - int(label_border), y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 		else:
 			continue
 
@@ -189,7 +188,7 @@ def qrcodeDetect(frame):
 		if data:
 			qr_content = data
 			print(qr_content)
-			# await snapshort(frame, "testsave.jpg", None)
+			# snapshort(frame, "testsave.jpg", None)
 			# return qr_content
 			### Make Output Data to NEXT step
 
@@ -200,7 +199,7 @@ def wordsDecetion(frame, gray_image):
 		cv2.putText(plates_rec, 'Text', (x, y-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,255,0), 1)
 
 		# fileName = f"{DT.now().strftime('%Y-%m-%d_%H-%M')}"
-		# await snapshort(frame, fileName, None)
+		# snapshort(frame, fileName, None)
 
 # loop = asyncio.get_event_loop()
 # loop.run_until_complete(streaming())
