@@ -50,7 +50,7 @@ async def snapshort(frame, fileName, filePath : None):
 
 ### OpenCV Core
 def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
-  CUDA_STATUS = False
+	CUDA_STATUS = False
 	cap = cv2.VideoCapture()
 	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
 		cv2.cuda.setDevice(0)
@@ -89,17 +89,17 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 	# temp_video_path = 'temp_video.mp4'
 	# out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width_, height_))
 	if not cap.isOpened():
-			if cap : cap.release()
-			print("Camera not Detected!")
-			continue
+		if cap : cap.release()
+		print("Camera not Detected!")
+		exit()
 
-  while True:
-	  rtf, frame = cap.read()
+	while True:
+		rtf, frame = cap.read()
 		if not rtf:
 			print(f"Failed to grab frame!")
 			if cap: cap.release()
 			continue
-    height, width, fps = frame.shape
+		height, width, fps = frame.shape
 		if brightness_gain is None:
 			brightness_gain = 1.0
 		else:
@@ -115,27 +115,22 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 		mask = object_detector.apply(bright_tuner)
 		gray_image = cv2.cvtColor(frame if not CUDA_STATUS else cuda_frame, cv2.COLOR_BGR2GRAY)
 
+		qrcodeDetect(bright_tuner)
 		motionDetection(bright_tuner, mask, label_border, min_area, max_area)
-		qrcodeDetect(bright_tuner, label_border, min_area, max_area)
 		faceDetection(bright_tuner, gray_image, label_border)
-		wordsDecetion(bright_tuner)
+		wordsDecetion(bright_tuner, gray_image)
 
-		# flipped_shape = cv2.flip(mask, 1)
-		# resized_thresh = cv2.resize(flipped_shape if cap is cv2.VideoCapture(0) else mask, (width, height))
-		# cv2.imshow("Object Detect View", resized_thresh)
 		# flipped = cv2.flip(bright_tuner, 1)
-		# resized_frame = cv2.resize(flipped if cap is cv2.VideoCapture(0) else frame, (width, height))
-		# cv2.namedWindow("IP Camera Stream", cv2.WINDOW_NORMAL)
-		# cv2.imshow("IP Camera Stream", resized_frame)
-		# cv2.imshow(bright_tuner) ### View Debug
-		# out.write(resized_frame) ### Write to .MP4 File
+		cv2.namedWindow("DEBUG VIEW - CUDA" if CUDA_STATUS else "EDBUG VIEW - CPU", cv2.WINDOW_NORMAL) ### Make Windpw Resizable
+		cv2.imshow("DEBUG VIEW - CUDA" if CUDA_STATUS else "EDBUG VIEW - CPU", bright_tuner) ### View Debug
+		# out.write(bright_tuner) ### Write to .MP4 File
 		
-		return  bright_tuner, mask
+		# return  bright_tuner, mask
 	
-		# if cv2.waitKey(1) & 0xFF == ord('q'):
-		# 	break
-	# cap.release()
-	# cv2.destroyAllWindows()
+		if cv2.waitKey(1) & 0xFF == ord('q'):
+			break
+	cap.release()
+	cv2.destroyAllWindows()
 ### OpenCV Core [END]
 
 ### FACE DETECTION
@@ -181,7 +176,7 @@ def motionDetection(frame, mask, label_border, min_area, max_area):
 			continue
 
 ### QRCode Detect
-async def qrcodeDetect(frame):
+def qrcodeDetect(frame):
 	data, points, _ = cv2.QRCodeDetector().detectAndDecode(frame)
 	if points is not None:
 		points = points[0]
@@ -198,9 +193,8 @@ async def qrcodeDetect(frame):
 			# return qr_content
 			### Make Output Data to NEXT step
 
-async def wordsDecetion(frame):
-	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	plates = plates_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20), flags=cv2.CASCADE_SCALE_IMAGE)
+def wordsDecetion(frame, gray_image):
+	plates = plates_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20), flags=cv2.CASCADE_SCALE_IMAGE)
 	for (x,y,w,h) in plates:
 		plates_rec = cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 1)        
 		cv2.putText(plates_rec, 'Text', (x, y-3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,255,0), 1)
