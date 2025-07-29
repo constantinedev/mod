@@ -105,7 +105,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 
 def ocvcore(cap, brightness_gain, label_border, min_area, max_area):
 	ret, frame = cap.read()
-	width, height, fps = frame.shape
+	# width, height, fps = frame.shape
 	if not ret:
 		return None, None
 
