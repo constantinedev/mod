@@ -59,13 +59,13 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 	else:
 		print(f"CUDA Devices Not Detected: {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
 		CUDA_STATUS = False
-	match resources:
+	match camera_src:
 		case int():
 			cap.open(int(camera_src))
 			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 		case str():
-			if "youtube.com" in resources:
+			if "youtube.com" in camera_src:
 				video_url, audio_url, yt_fps = ytStream(str(camera_src), 'cookies.txt')
 				print(video_url)
 				cap.open(str(video_url), cv2.CAP_FFMPEG)
@@ -75,7 +75,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 			else:
 				cap.open(str(camera_src), cv2.CAP_FFMPEG)
 		case _:
-			print(f"Input Resources Empty. ")
+			print(f"Stream Resources not Get!")
 			exit()
   
 	cap = callcamera(camera_src)
@@ -89,18 +89,17 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 	# fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 	# temp_video_path = 'temp_video.mp4'
 	# out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width_, height_))
-	
-	while True:
-		if not cap.isOpened():
+	if not cap.isOpened():
 			if cap : cap.release()
 			print("Camera not Detected!")
 			continue
-		height, width, fps = frame.shape
-		rtf, frame = cap.read()
+	while True:
+	  rtf, frame = cap.read()
 		if not rtf:
 			print(f"Failed to grab frame!")
 			if cap: cap.release()
 			continue
+    height, width, fps = frame.shape
 		if brightness_gain is None:
 			brightness_gain = 1.0
 		else:
