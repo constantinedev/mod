@@ -203,3 +203,10 @@ def wordsDecetion(frame, gray_image):
 
 # loop = asyncio.get_event_loop()
 # loop.run_until_complete(streaming())
+
+### Python Version Request: up to 3.11
+### Modueles requests: opencv-python opencv-python-headless opencv-contrib-python opencv-contrib-python-headless 
+### Options requests: CUDA
+### Descriptions: craete your cap to ocvcore and get frame and mask with other detections. 
+### streaming: is also the debug when you given the drightness, boxs border, min aree, max area for showing with imshow() for debug.
+### If you want to use the modules with a copy you can edit in "streaming" for development your funciton.
