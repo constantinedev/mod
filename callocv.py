@@ -48,6 +48,29 @@ async def snapshort(frame, fileName, filePath : None):
 	cv2.imwrite(file_save_as, frame)
 	return
 
+### Config Cmaner
+def callcamera(resources):
+	cap = cv2.VideoCapture()
+	match resources:
+		case int():
+			cap.open(int(resources), cv2.CAP_DSHOW)
+			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+		case str():
+			if "youtube.com" in resources:
+				video_url, audio_url, yt_fps = ytStream(str(resources), 'cookies.txt')
+				print(video_url)
+				cap.open(str(video_url), cv2.CAP_FFMPEG)
+				if audio_url is not None:
+					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
+					audio_thread.start()
+			else:
+				cap.open(str(resources), cv2.CAP_FFMPEG)
+		case _:
+			print(f"Input Resources Empty. ")
+			exit()
+	return cap
+
 CUDA_STATUS = False
 ### OpenCV Core
 def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
@@ -59,21 +82,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 		CUDA_STATUS = False
 		print(f"CUDA Device(s) Not Detected! {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
 	
-	match camera_src:
-		case int():
-			cap = cv2.VideoCapture(int(camera_src), cv2.CAP_DSHOW)
-		case str():
-			if 'youtube.com' in camera_src:
-				video_url, audio_url, yt_fps = ytStream(str(camera_src), cv2.CAP_FFMPEG)
-				cap = cv2.VideoCapture(str(video_url, cv2.CAP_FFMPEG))
-				if audio_url:
-					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
-					audio_thread.start()
-			else:
-				cap = cv2.VideoCapture(str(camera_src), cv2.CAP_FFMPEG)
-		case _:
-			print(f"Camera Not get Resources.")
-			return f"Camera Not get Resources."
+	cap = callcamera(camera_src)
 	
 	width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 	height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -105,7 +114,7 @@ def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
 
 def ocvcore(cap, brightness_gain, label_border, min_area, max_area):
 	ret, frame = cap.read()
-	# width, height, fps = frame.shape
+	# width, height, fps = cap.shape
 	if not ret:
 		return None, None
 
@@ -134,7 +143,7 @@ def ocvcore(cap, brightness_gain, label_border, min_area, max_area):
 
 ### FACE DETECTION
 def faceDetection(frame, gray_image, label_border):
-	face = face_classifier.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+	face = face_classifier.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(50, 50), flags=cv2.CASCADE_SCALE_IMAGE)
 
 	if len(face) > 0:
 		x, y, w, h = face[0]
