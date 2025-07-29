@@ -9,37 +9,6 @@ qrcode_detector = cv2.QRCodeDetector()
 face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 plates_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_license_plate_rus_16stages.xml')
 
-### Config Cmaner
-def callcamera(resources):
-	CUDA_STATUS = False
-	cap = cv2.VideoCapture()
-	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
-		cv2.cuda.setDevice(0)
-		print(f"CUDA Devices Detected: {cv2.cuda.getCudaEnabledDeviceCount()}")
-		CUDA_STATUS = True
-	else:
-		print(f"CUDA Devices Not Detected: {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
-		CUDA_STATUS = False
-	match resources:
-		case int():
-			cap.open(int(resources))
-			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-		case str():
-			if "youtube.com" in resources:
-				video_url, audio_url, yt_fps = ytStream(str(resources), 'cookies.txt')
-				print(video_url)
-				cap.open(str(video_url), cv2.CAP_FFMPEG)
-				if audio_url is not None:
-					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
-					audio_thread.start()
-			else:
-				cap.open(str(resources), cv2.CAP_FFMPEG)
-		case _:
-			print(f"Input Resources Empty. ")
-			exit()
-	return cap
-
 ### Play Audio
 def play_audio(url):
 	if not url:
@@ -81,6 +50,34 @@ async def snapshort(frame, fileName, filePath : None):
 
 ### OpenCV Core
 def streaming(camera_src, brightness_gain, label_border, min_area, max_area):
+  CUDA_STATUS = False
+	cap = cv2.VideoCapture()
+	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+		cv2.cuda.setDevice(0)
+		print(f"CUDA Devices Detected: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		CUDA_STATUS = True
+	else:
+		print(f"CUDA Devices Not Detected: {cv2.cuda.getCudaEnabledDeviceCount()}, CPU are running...")
+		CUDA_STATUS = False
+	match resources:
+		case int():
+			cap.open(int(camera_src))
+			cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+			cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+		case str():
+			if "youtube.com" in resources:
+				video_url, audio_url, yt_fps = ytStream(str(camera_src), 'cookies.txt')
+				print(video_url)
+				cap.open(str(video_url), cv2.CAP_FFMPEG)
+				if audio_url is not None:
+					audio_thread = threading.Thread(target=play_audio, args=(str(audio_url), ))
+					audio_thread.start()
+			else:
+				cap.open(str(camera_src), cv2.CAP_FFMPEG)
+		case _:
+			print(f"Input Resources Empty. ")
+			exit()
+  
 	cap = callcamera(camera_src)
 	width_ = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 	height_ = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
