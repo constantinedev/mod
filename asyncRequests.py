@@ -22,75 +22,45 @@ headeres = {
 }
 
 async def gun_shell(url, method, type, headers, payload):
-  if url == "" or url is None:
-    return {"status": "Error", "response": "URL was empty."}
-  
-  if headers=={} or headers is None:
-    headers.updates({'user-Agent':user_agent,'Content-Type': 'html/text'})
-  else:
-    headers.update(headers)
-  
-  if payload=={} or payload is None:
-    payload = {}
-  if type == "nor":
-    return await nor_req(url, method, type, headers, payload)
-  if type == "tor":
-    return await tor_req(url, method, type, headers, payload)
-  
+	if url == "" or url is None:
+		return {"status": "Error", "response": "URL was empty."}
+	
+	if headers=={} or headers is None:
+		headers.updates({'user-Agent':user_agent,'Content-Type': 'html/text'})
+	else:
+		headers.update(headers)
+	
+	if payload=={} or payload is None:
+		payload = {}
+	if type == "nor":
+		return await nor_req(url, method, type, headers, payload)
+	if type == "tor":
+		return await tor_req(url, method, type, headers, payload)
+	
 async def nor_req(url, method, type, headers, payload):
+	Cloudscraper = cloudscraper.create_scraper(sess=headers)
+
 	if method == "GET":
 		req = requests.get(url, headers=headers, data=payload)
-		if req.status_code == 200:
-			retData = {
-				'status': req.status_code,
-				'method': method,
-				'type': type,
-				'response': req.content
-      }
-		else:
-			Cloudscraper = cloudscraper.create_scraper(sess=headers)
-			result = Cloudscraper.get(url, headers=headers)
-			if result.status_code == 200:
-				retData = {
-					'status': result.status_code,
-					'method': method,
-					'type': type,
-					'response': result.content
-				}
-			else:
-				retData = {
-					'status': result.status_code,
-					'method': method,
-					'type': type,
-					'response': ""
-				}
-
+		result = Cloudscraper.get(url, headers=headers)
 	elif method == "POST":
 		req = requests.post(url, headers=headers, data=payload)
+		result = Cloudscraper.post(url, headers=headers)
 	if req.status_code == 200:
 		retData = {
-			"status": req.status_code,
+			'status': req.status_code,
 			'method': method,
 			'type': type,
-			"response": req.content
+			'response': req.content if req.status_code == 200 else ""
 		}
 	else:
-		Cloudscraper = cloudscraper.create_scraper(sess=headers)
-		result = Cloudscraper.post(url, headers=headers)
-		if result.status_code == 200:
-			retData = {
-				"status": result.status_code,
-				'method': method,
-				'type': type,
-				'response': result.content
-			}
-		else:
-			retData = {
-				"status": result.status_code,
-				'method': method,
-				'type': type,
-				'response': ""
-			}
+		retData = {
+			'status': result.status_code,
+			'method': method,
+			'type': type,
+			'response': result.content if result.status_code == 200 else ""
+		}
+
 	return retData
 
 async def tor_req(url, method, type, headers, payload):
@@ -98,18 +68,10 @@ async def tor_req(url, method, type, headers, payload):
 		req = session.get(url, headers=headers, data=payload)
 	elif method == "POST":
 		req = session.post(url, headers=headers, data=payload)
-	if req.status_code == 200:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			"response": req.text
-		}
-	else:
-		retData = {
-			"status": req.status_code,
-			'method': method,
-			'type': type,
-			'response': ""
-		}
+	retData = {
+		"status": req.status_code,
+		'method': method,
+		'type': type,
+		"response": req._content if req.status_code == 200 else f""
+	}
 	return retData
