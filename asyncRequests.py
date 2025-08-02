@@ -51,7 +51,7 @@ async def nor_req(url, method, type, headers, payload):
 			'status': req.status_code,
 			'method': method,
 			'type': type,
-			'response': req.content if req.status_code == 200 else ""
+			'response': req.content
 		}
 	else:
 		retData = {
