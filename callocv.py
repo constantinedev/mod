@@ -87,15 +87,14 @@ def corecv(cap, brightness_gain, label_border, min_area, max_area):
 			print("Failed to grab frame!")
 			return None
 	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
-		cv2.ocl.setUseOpenCL(True)
 		gpu_frame = cv2.cuda_GpuMat()
 		gpu_frame.upload(frame)
 		cuda_frame = gpu_frame.download()
 		CUDA_STATUS = True
 	else: 
-		cv2.ocl.setUseOpenCL(True)
 		CUDA_STATUS = False
-		
+
+	cv2.ocl.setUseOpenCL(True)
 	brightness_tunner = cv2.convertScaleAbs(cuda_frame if CUDA_STATUS else frame, alpha=1.0 if brightness_gain is None else int(brightness_gain), beta=20)
 	mask = object_detector.apply(brightness_tunner)
 	gray_image = cv2.cvtColor(brightness_tunner, cv2.COLOR_BGR2GRAY)
@@ -213,7 +212,7 @@ def StreamViewer(camera_src, brightness_gain, label_border, min_area, max_area):
 ############################COPY THIS CODE TO YOUR PROJECT############################>
 
 if __name__ == "__main__":
-	username, password, ip, channel = "cctv95", "Newland1", "192.168.0.17", 4
+	username, password, ip, channel = "ExampleUserName", "ExamplePassword", "192.168.xxx.XXX", 4
 	path = f"channel={int(channel)}&stream=0.sdp"
 	canera_src = f"rtsp://{username}:{password}@{ip}/{path}"
 	label_border, brightness_gain = 12, 1.0
