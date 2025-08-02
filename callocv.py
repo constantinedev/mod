@@ -228,10 +228,12 @@ if __name__ == "__main__":
 ### qrcodeDetection: Detect QR codes in the video stream (<frame>), "snapshot" = Disable Default
 ### faceDetection: Detect faces in the video stream (<frame>) "snapshot" = Disable Default
 ### wordsDetection: Detect words in the video stream
+### out : Save the stream to MP4 format, you can change the save format in <fourcc>
 ### ==========================
 ### object_detector : using createBackgroundSubtractorMOG2()
 ### face_classifier : OpenCV face detection basic model. [haarcascade_frontalface_default.xml]
 ### words_classifier : OpenCV text detection basic model. [haarcascade_russian_plate_number.xml]
 ### CUDA_STATUS : Default False to disable, True to enable
+### === pip install ===
 ### python3 -m pip install -U opencv-python opencv-contrib-python opencv-python-headless opencv-contrib-python-headless
 ############################
