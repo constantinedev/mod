@@ -9,6 +9,7 @@ qrcode_detector = cv2.QRCodeDetector()
 object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=50, detectShadows=True)
 face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 plates_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_license_plate_rus_16stages.xml")
+CUDA_STATUS = False
 
 ### YouTube Stream URL
 def ytStream(url, cookies_path=None):
