@@ -214,7 +214,7 @@ def StreamViewer(camera_src, brightness_gain, label_border, min_area, max_area):
 	#out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width, height))
 	
 	while True:
-		frame, mask, gray_image, CUDA_STATUS = corecv(cap, brightness_gain, label_border, min_area, max_area)
+		frame, mask, gray_image = corecv(cap, brightness_gain, label_border, min_area, max_area)
 		if frame is None:
 			print("Failed to grab frame!")
 			break
