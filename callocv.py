@@ -79,6 +79,25 @@ def callcamera(resources):
 			exit()
 	return cap
 
+def ocvcap(cap, brightness_gain):
+	if not cap.isOpened():
+		return
+	ret, frame = cap.read()
+	if not ret:
+		return
+	
+	if CUDA_STATUS:
+		gpu_frame = cv2.cuda_GpuMat()
+		gpu_frame.upload(frame)
+		cuda_frame = gpu_frame.download()
+	else: pass
+	
+	brightness_tunner = cv2.convertScaleAbs(cuda_frame if CUDA_STATUS else frame, alpha=1.0 if brightness_gain is None else int(brightness_gain), beta=20)
+	mask = object_detector.apply(brightness_tunner)
+	gray_image = cv2.cvtColor(brightness_tunner, cv2.COLOR_BGR2GRAY)
+	
+	return brightness_tunner, mask, gray_image
+
 def corecv(cap, brightness_gain, label_border, min_area, max_area):
 	ref, frame = cap.read()
 	width, height, fps = frame.shape
@@ -190,9 +209,9 @@ def StreamViewer(camera_src, brightness_gain, label_border, min_area, max_area):
 	fps = cap.get(cv2.CAP_PROP_FPS)
 	print(f"Camera Resolution: {width}x{height}, FPS: {fps}")
 	### SAVE STREAM to MP4
-	fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-	temp_video_path = 'temp_video.mp4'
-	out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width, height))
+	#fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+	#temp_video_path = 'temp_video.mp4'
+	#out = cv2.VideoWriter(temp_video_path, fourcc, fps, (width, height))
 	
 	while True:
 		frame, mask, gray_image, CUDA_STATUS = corecv(cap, brightness_gain, label_border, min_area, max_area)
