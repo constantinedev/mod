@@ -146,6 +146,7 @@ def faceDetection(frame, gray_image, label_border):
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 1)
 		cv2.putText(frame, "FACE DETECT", (x, y - int(label_border)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
+### Motion Deteaction
 def motionDetection(frame, mask, label_border, min_area, max_area):
 	contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 	for contour in contours:
