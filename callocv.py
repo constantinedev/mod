@@ -54,10 +54,10 @@ def callcamera(resources):
 	cap = cv2.VideoCapture()
 	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
 		cv2.cuda.setDevice(0)
-		# print(f"CUDA Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		print(f"CUDA Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
 		CUDA_STATUS = True
 	else:
-		# print(f"CUDA NOT Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		print(f"CUDA Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}, CUP are running...")
 		CUDA_STATUS = False
 	
 	match resources:
@@ -78,7 +78,7 @@ def callcamera(resources):
 		case _:
 			print(f"Input Resources Empty. ")
 			exit()
-	return cap
+	return cap, CUDA_STATUS
 
 def ocvcap(cap, brightness_gain):
 	if not cap.isOpened():
@@ -192,9 +192,10 @@ def wordsDetection(frame, gray_image):
 ### You can copy the following code to use in your project
 ### to reacall your cv from function
 ### * StreamViewer : You need to follow the rules to give the values of function,
-### * cap : call camera from functoin, you can also <callcamera> from the other functoin, 
-### 				This is include the CUDA checking, and will return the Video Capture with src.
-### * corecv : Real OpenCV Frame filter, you must make the detection in the <corecv> function
+### * callcamera : call camera from functoin, you can also <callcamera> from the other functoin, 
+### 							This is include the CUDA checking, and will return the Video Capture with src.
+###								CUDA_STATUS also will return in g.e.: <cap, CUDA_STATUS = callcamera(url)>
+### * corecv : OpenCV Frame filter, you must make the detection in the <corecv> function
 ### ** The Demo are show in __main__, update the info for test your devices.
 ############################
 ############################COPY THIS CODE TO YOUR PROJECT############################>
