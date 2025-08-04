@@ -54,10 +54,10 @@ def callcamera(resources):
 	cap = cv2.VideoCapture()
 	if cv2.cuda.getCudaEnabledDeviceCount() > 0:
 		cv2.cuda.setDevice(0)
-		print(f"CUDA Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		# print(f"CUDA Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
 		CUDA_STATUS = True
 	else:
-		print(f"CUDA NOT Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
+		# print(f"CUDA NOT Detected Devices: {cv2.cuda.getCudaEnabledDeviceCount()}")
 		CUDA_STATUS = False
 	
 	match resources:
