@@ -124,7 +124,7 @@ def corecv(cap, brightness_gain, label_border, min_area, max_area):
 	faceDetection(brightness_tunner if not CUDA_STATUS else cuda_frame, gray_image, label_border)
 	wordsDetection(brightness_tunner if not CUDA_STATUS else cuda_frame, gray_image)
 
-	return brightness_tunner, mask, gray_image, CUDA_STATUS
+	return brightness_tunner, mask, gray_image
 
 ### Face Detection
 def faceDetection(frame, gray_image, label_border):
@@ -201,7 +201,7 @@ def wordsDetection(frame, gray_image):
 ############################COPY THIS CODE TO YOUR PROJECT############################>
 ### MAIN Function
 def StreamViewer(camera_src, brightness_gain, label_border, min_area, max_area):
-	cap = callcamera(camera_src)
+	cap, CUDA_STATUS = callcamera(camera_src)
 
 	if not cap.isOpened():
 		print(f"Failed to open camera source: {camera_src}")
@@ -234,7 +234,7 @@ def StreamViewer(camera_src, brightness_gain, label_border, min_area, max_area):
 ############################COPY THIS CODE TO YOUR PROJECT############################>
 
 if __name__ == "__main__":
-	username, password, ip, channel = "ExampleUserName", "ExamplePassword", "192.168.xxx.XXX", 4
+	username, password, ip, channel = "username", "password", "192.168.xxx.xxx", 4
 	path = f"channel={int(channel)}&stream=0.sdp"
 	canera_src = f"rtsp://{username}:{password}@{ip}/{path}"
 	label_border, brightness_gain = 12, 1.0
