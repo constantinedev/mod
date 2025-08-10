@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>User Data Deletion Agreement</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#4f46e5;--muted:#9ca3af;--text:#e6eef8}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:linear-gradient(180deg,#071122 0%, #071830 100%);color:var(--text);line-height:1.5}
+    .container{max-width:900px;margin:48px auto;padding:28px;background:rgba(255,255,255,0.03);border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    h1{font-size:1.6rem;margin:0 0 6px}
+    p.lead{color:var(--muted);margin-top:0}
+    section{margin-top:20px}
+    dl{display:grid;grid-template-columns:150px 1fr;gap:8px 18px}
+    dt{color:var(--muted);font-weight:600}
+    dd{margin:0}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:18px;border-radius:10px}
+    form{margin-top:12px}
+    label{display:block;font-size:0.9rem;margin-bottom:6px}
+    input[type=text],input[type=email],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text)}
+    textarea{min-height:100px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent);color:white;border:none;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    .muted{color:var(--muted);font-size:0.9rem}
+    footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
+    .note{background:rgba(79,70,229,0.07);padding:12px;border-radius:8px;color:#e6e9ff}
+    .flex{display:flex;gap:12px;align-items:center}
+    @media (max-width:720px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <header>
+      <h1>User Data Deletion Agreement</h1>
+      <p class="lead">This page provides a deletion agreement template you can display on your website to explain how users may request deletion of their personal data and what we (the data controller) will do in response.</p>
+    </header>
+
+    <section class="card" aria-labelledby="scope-heading">
+      <h2 id="scope-heading">1. Scope & Definitions</h2>
+      <dl>
+        <dt>Data Controller</dt>
+        <dd>The organization operating this website ("Organization").</dd>
+        <dt>Personal Data</dt>
+        <dd>Any information that identifies or could reasonably identify an individual, including name, email, account identifiers, profile data, and usage logs.</dd>
+        <dt>Deletion Request</dt>
+        <dd>A user's request that the Organization permanently erase Personal Data associated with the user.</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>2. What you can request</h2>
+      <ul>
+        <li>Complete deletion of your Personal Data from active systems and databases.</li>
+        <li>Removal of your profile, account, and content posted by you (subject to exceptions below).</li>
+        <li>Confirmation that the deletion was completed or a reasoned refusal if we cannot comply.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>3. How to make a deletion request</h2>
+      <p class="muted">Fill the form below or contact <strong>privacy@example.org</strong>. We may request verification to confirm the identity of the requester before processing.</p>
+
+      <form id="deletion-form" action="/api/request-deletion" method="post" enctype="multipart/form-data" novalidate>
+        <div class="row">
+          <div>
+            <label for="fullName">Full name</label>
+            <input id="fullName" name="fullName" type="text" required placeholder="Jane Doe" />
+          </div>
+          <div>
+            <label for="email">Email (account email)</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <label for="userId">Account ID (if known)</label>
+        <input id="userId" name="userId" type="text" placeholder="Optional — user, UUID, or handle" />
+
+        <label for="reason">Reason (optional)</label>
+        <textarea id="reason" name="reason" placeholder="Why are you requesting deletion?"></textarea>
+
+        <label class="muted">Upload verification document (optional)</label>
+        <input id="verifyFile" name="verifyFile" type="file" accept="image/*,.pdf" />
+
+        <p class="muted"><strong>Note:</strong> We may ask for additional proof if necessary. Files uploaded are used solely for verification and will be deleted after processing unless otherwise required by law.</p>
+
+        <div class="flex" style="margin-top:12px">
+          <button class="btn" type="submit">Submit deletion request</button>
+          <button type="button" class="btn ghost" onclick="fillExample()">Fill example</button>
+        </div>
+      </form>
+
+      <script>
+        // Lightweight client-side validation + UI feedback
+        document.getElementById('deletion-form').addEventListener('submit', function(e){
+          e.preventDefault();
+          // simple validation
+          const name = document.getElementById('fullName').value.trim();
+          const email = document.getElementById('email').value.trim();
+          if(!name || !email){
+            alert('Please provide your full name and email associated with the account.');
+            return;
+          }
+
+          // show confirmation and then perform a POST - here we simulate submission
+          const confirmMsg = `By submitting, you request deletion of data tied to ${email}. Click OK to continue.`;
+          if(!confirm(confirmMsg)) return;
+
+          // In production, perform a secure POST (fetch) to your backend endpoint and handle the response.
+          // Example (uncomment & adapt):
+          /*
+          const formData = new FormData(this);
+          fetch(this.action, { method: 'POST', body: formData, credentials: 'include' })
+            .then(r => r.json())
+            .then(data => alert('Request received: ' + (data.message || 'We will process your request.')))
+            .catch(err => alert('Submission failed: ' + err.message));
+          */
+
+          // Simulated response for this template
+          alert('Deletion request submitted (simulation). In production this would POST to your server endpoint.');
+        });
+
+        function fillExample(){
+          document.getElementById('fullName').value = 'Jane Example';
+          document.getElementById('email').value = 'jane@example.org';
+          document.getElementById('userId').value = 'user-12345';
+          document.getElementById('reason').value = 'No longer wish to use the service.';
+        }
+      </script>
+    </section>
+
+    <section class="card">
+      <h2>4. Our obligations & timelines</h2>
+      <ol>
+        <li>Acknowledgement: We will acknowledge receipt within <strong>5 business days</strong>.</li>
+        <li>Verification: If identity verification is required, we will request it within 5 business days.</li>
+        <li>Deletion: We will complete deletion from active systems within <strong>30 days</strong> of verification, unless an exception applies.</li>
+        <li>Backups: Copies in offline backups may persist for up to <strong>90 days</strong> and will be deleted in accordance with our backup retention and recovery procedures.</li>
+      </ol>
+
+      <div class="note" style="margin-top:10px">
+        <strong>Exceptions:</strong> We may refuse or partially fulfill deletion requests when necessary to: comply with legal obligations (tax, law enforcement, audits), defend legal claims, complete transactions you requested, or preserve anonymized/aggregated statistical data.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. Scope of deletion & residual data</h2>
+      <p class="muted">Deletion removes personal identifiers and account data from our active systems. Some derived data (aggregated analytics or logs irreversibly anonymized) may be retained for legitimate business purposes.</p>
+    </section>
+
+    <section class="card">
+      <h2>6. Proof of deletion</h2>
+      <p class="muted">Upon completion we will provide a confirmation email describing which data was deleted and the effective deletion date. We do not provide access to internal audit logs, but can provide a deletion certificate on request if available.</p>
+    </section>
+
+    <section class="card">
+      <h2>7. Dispute & escalation</h2>
+      <p>If you disagree with our decision, please contact <strong>privacy@example.org</strong>. You may escalate to relevant supervisory authorities under applicable law.</p>
+    </section>
+
+    <section class="card">
+      <h2>8. Miscellaneous</h2>
+      <ul>
+        <li>This agreement is a template and does not constitute legal advice. Consult your legal counsel to adapt to local laws (e.g., GDPR, CCPA, PDPA).</li>
+        <li>Governing law: <em>Specify jurisdiction</em> (e.g., State/Country where your organization is established).</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p class="muted">Last updated: <!-- yyyy-mm-dd --> 2025-08-10. <strong>Disclaimer:</strong> Customize and review with legal counsel before publishing.</p>
+    </footer>
+  </main>
+</body>
+</html>
